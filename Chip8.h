@@ -6,6 +6,8 @@
 #define CHIP_8_CHIP8_H
 
 #include <cstdint>
+#include <chrono>
+#include <random>
 
 const unsigned int START_ADDRESS = 0x200;
 const unsigned int FONTSET_SIZE  = 80;
@@ -26,6 +28,9 @@ class Chip8 {
     uint8_t keypad[16];
     uint32_t video[64*32];
     uint16_t opcode;
+
+    std::default_random_engine randGen;
+    std::uniform_int_distribution<uint8_t> randByte;
 
     uint8_t font_set[FONTSET_SIZE] = {
         0xF0, 0x90, 0x90, 0x90, 0xF0, // 0
@@ -48,13 +53,16 @@ class Chip8 {
 
     /// @brief 
     /// @return 
-    Chip8() {
+    Chip8() : randGen(std::chrono::system_clock::now().time_since_epoch().count()) {
         // initialize pc
         pc = START_ADDRESS;
 
-       // for (int i = 0; i < FONTSET_SIZE; i++) {
-       //     //memory[FONT]
-       // }
+        for (int i = 0; i < FONTSET_SIZE; i++) {
+            memory[FONTSET_START_ADDRESS + i] = font_set[i];
+        }
+
+        // intialize RNG
+        randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
     }
 
     void LoadRom(char const* fileName); 
