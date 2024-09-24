@@ -357,3 +357,23 @@ void Chip8::op_Fx65() {
         registers[i] = memory[index + i];
     }
 }
+
+void Chip8::Table0() {
+    ((*this).*(table0[opcode & 0x000FU]))();
+}
+
+void Chip8::Table8() {
+    ((*this).*(table8[(opcode & 0x000FU)]))();
+}
+
+void Chip8::TableE() {
+    ((*this).*(tableE[(opcode & 0x000FU)]))();
+}
+
+void Chip8::TableF() {
+    (((*this).*(tableF[(opcode & 0x00FFU)])))();
+}
+
+void Chip8::op_NULL() {
+    // do nothing
+}

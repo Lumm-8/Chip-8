@@ -54,6 +54,14 @@ class Chip8 {
         0xF0, 0x80, 0xF0, 0x80, 0x80  // F
     };
 
+    typedef void (Chip8::*Chip8Func) ();
+
+    Chip8Func table[0xF + 1];
+    Chip8Func table0[0xF];
+    Chip8Func table8[0xF];
+    Chip8Func tableE[0xF];
+    Chip8Func tableF[0x65 + 1];
+
     /// @brief 
     /// @return 
     Chip8() : randGen(std::chrono::system_clock::now().time_since_epoch().count()) {
@@ -66,6 +74,59 @@ class Chip8 {
 
         // intialize RNG
         randByte = std::uniform_int_distribution<uint8_t>(0, 255U);
+
+        table[0] = Chip8::Table0;
+        table[1] = Chip8::op_1nnn;
+        table[2] = Chip8::op_2nnn;
+        table[3] = Chip8::op_3xkk;
+        table[4] = Chip8::op_4xkk;
+        table[5] = Chip8::op_5xy0;
+        table[6] = Chip8::op_6xkk;
+        table[7] = Chip8::op_7xkk;
+        table[8] = Chip8::Table8;
+        table[9] = Chip8::op_9xy0;
+        table[0xA] = Chip8::op_Annn;
+        table[0xB] = Chip8::op_Bnnn;
+        table[0xC] = Chip8::op_Cxkk;
+        table[0xD] = Chip8::op_Dxyn;
+        table[0xE] = Chip8::TableE;
+        table[0xF] = Chip8::TableF;
+
+        for (int i = 0; i < 0xF; i++) {
+            table0[i] = Chip8::op_NULL;
+            table8[i] = Chip8::op_NULL;
+            tableE[i] = Chip8::op_NULL;
+        }
+
+        table0[0x0] = Chip8::op_00E0;
+        table0[0xE] = Chip8::op_00EE;
+
+        table8[0x0] = Chip8::op_8xy0;
+        table8[0x1] = Chip8::op_8xy1;
+        table8[0x2] = Chip8::op_8xy2;
+        table8[0x3] = Chip8::op_8xy3;
+        table8[0x4] = Chip8::op_8xy4;
+        table8[0x5] = Chip8::op_8xy5;
+        table8[0x6] = Chip8::op_8xy6;
+        table8[0x7] = Chip8::op_8xy7;
+        table8[0xE] = Chip8::op_8xyE;
+
+        tableE[0xE] = Chip8::op_Ex9E;
+        tableE[0x1] = Chip8::op_ExA1;
+
+        for (int i = 0; i <= 0x65; i++) {
+            tableF[i] = Chip8::op_NULL;
+        }
+
+        tableF[0x07] = Chip8::op_Fx07;
+        tableF[0x0A] = Chip8::op_Fx0A;
+        tableF[0x15] = Chip8::op_Fx15;
+        tableF[0x18] = Chip8::op_Fx18;
+        tableF[0x1E] = Chip8::op_Fx1E;
+        tableF[0x29] = Chip8::op_Fx29;
+        tableF[0x33] = Chip8::op_Fx33;
+        tableF[0x55] = Chip8::op_Fx55;
+        tableF[0x65] = Chip8::op_Fx65;
     }
 
     void LoadRom(char const* fileName); 
@@ -150,6 +211,12 @@ class Chip8 {
     // Fx65: LD Vx, [I],
     // read registers V0 through Vx from memory starting at location I.
     void op_Fx65();
+
+    void Table0();
+    void Table8();
+    void TableE();
+    void TableF();
+    void op_NULL();
 };
 
 
