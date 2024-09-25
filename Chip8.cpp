@@ -377,3 +377,18 @@ void Chip8::TableF() {
 void Chip8::op_NULL() {
     // do nothing
 }
+
+void Chip8::Cycle() {
+    opcode = (memory[pc] << 8U) | memory[pc + 1];
+    pc += 2;
+
+    ((*this).*(table[(opcode & 0xF000U) >> 12U]))();
+
+    if (delay_timer > 0) {
+        delay_timer--;
+    }
+
+    if (sound_timer > 0) {
+        sound_timer--;
+    }
+}

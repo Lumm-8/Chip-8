@@ -217,6 +217,8 @@ class Chip8 {
     void TableE();
     void TableF();
     void op_NULL();
+
+    void Cycle();
 };
 
 
