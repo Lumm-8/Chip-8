@@ -5,6 +5,7 @@
 
 #include <fstream>
 #include <cstring>
+#include <iostream>
 #include "Chip8.h"
 
 void Chip8::LoadRom(char const* fileName) {
@@ -33,10 +34,12 @@ void Chip8::op_00E0() {
 }
 
 void Chip8::op_00EE() {
+    std::cout << " op_00EE " << std::endl;
    pc = stack[--sp]; 
 }
 
 void Chip8::op_1nnn() {
+    std::cout << " op_1nnn \n";
     uint16_t address = opcode & 0x0FFFU;
     pc = address;
 }
